@@ -18,7 +18,7 @@ def Data(request):
         return Response(serializer.data)
     
     elif request.method == "POST":
-        serializer = UserSerializer(data = request.data)
+        serializer = UserSerializer(data = request.data,partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -27,7 +27,6 @@ def Data(request):
     elif request.method == 'PUT':
         try:
             data = json.loads(request.body)
-            print(data)
             id = data["id"]
         except:
             return Response("Missing Data")

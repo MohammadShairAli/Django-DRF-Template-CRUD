@@ -5,7 +5,7 @@ class Colours(models.Model):
         ("red","red"),
         ("pink","pink")
     )
-    colourName = models.CharField(max_length=10,choices=choices, blank=True, null=True)
+    colourName = models.CharField(max_length=10,choices=choices, blank=False, null=False)
 
     def __str__(self):
         return self.colourName

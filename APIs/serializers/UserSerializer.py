@@ -1,14 +1,15 @@
 from rest_framework import serializers
-from APIs.models import User, Profile
+from APIs.models import User, Profile, Courses
 from .UserProfileSerializer import UserProfileSerializer
 from .ColorSerializer import ColorSerializer
-from .CoursesSerializer import CoursesSerializer
 
 class UserSerializer(serializers.ModelSerializer):
-    profile = UserProfileSerializer()
-    colours = ColorSerializer()
-    courses = CoursesSerializer(many=True)
+    profile = UserProfileSerializer(required=True)
+    colours = ColorSerializer(required=False)
+    courses = serializers.PrimaryKeyRelatedField(many=True, queryset=Courses.objects.all(), required=False)
     password = serializers.CharField(write_only=True)
+    username = serializers.SerializerMethodField()
+    FirstName = serializers.SerializerMethodField()
 
     class Meta:
         model = User
@@ -24,6 +25,12 @@ class UserSerializer(serializers.ModelSerializer):
         
         return data
     
+    def get_username(self,obj):
+        return f"{obj.FirstName} {obj.LastName}"
+    
+    def get_FirstName(self,obj):
+        return f"Mr. {obj.FirstName}"
+    
     def create(self, data):
         profileData = data.pop("profile")
         profile = Profile.objects.create(**profileData)
@@ -31,11 +38,9 @@ class UserSerializer(serializers.ModelSerializer):
         return user
     
     def update(self, instance, data):
-        courses = data.pop("courses",None)
-        if courses:
-            CoursesDataSerializer = CoursesSerializer(instance.courses, data = courses, partial=True)
-            if CoursesDataSerializer.is_valid(raise_exception=True):
-                CoursesDataSerializer.save()
+        courses = data.pop("courses",[])
+        if courses is not None:
+            instance.courses.set(courses)
         
         ColourData = data.pop("colours",None)
         if ColourData:

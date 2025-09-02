@@ -19,7 +19,7 @@ def Color(request):
     
     elif request.method == "POST":
         serializer = ColorSerializer(data = request.data)
-        if serializer.is_valid():
+        if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors)
