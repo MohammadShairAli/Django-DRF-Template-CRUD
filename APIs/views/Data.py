@@ -5,9 +5,9 @@ from APIs.models import User
 from APIs.serializers import UserSerializer
 import json
 
-@api_view(['GET','POST','PUT','PATCH','DELETE'])
-def Data(request):
-    if request.method == "GET":
+# @api_view(['GET','POST','PUT','PATCH','DELETE'])
+class Data(APIView):
+    def get(self,request):
         id = request.GET.get("id")
         if id :
             Data = User.objects.get(id=id)
@@ -17,14 +17,14 @@ def Data(request):
             serializer = UserSerializer(Data,many=True)
         return Response(serializer.data)
     
-    elif request.method == "POST":
+    def post(self,request):
         serializer = UserSerializer(data = request.data,partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors)
     
-    elif request.method == 'PUT':
+    def put(self,request):
         try:
             data = json.loads(request.body)
             id = data["id"]
@@ -37,7 +37,7 @@ def Data(request):
             return Response(serializer.data)
         return Response(serializer.errors)
     
-    elif request.method == 'PATCH':
+    def patch(self,request):
         try:
             data = json.loads(request.body)
             id = data['id']
@@ -51,7 +51,7 @@ def Data(request):
             return Response(serializer.data)
         return Response(serializer.errors)
 
-    else:
+    def delete(self,request):
         try:
             data = request.GET
             id = data["id"]

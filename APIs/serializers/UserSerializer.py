@@ -9,7 +9,6 @@ class UserSerializer(serializers.ModelSerializer):
     courses = serializers.PrimaryKeyRelatedField(many=True, queryset=Courses.objects.all(), required=False)
     password = serializers.CharField(write_only=True)
     username = serializers.SerializerMethodField()
-    FirstName = serializers.SerializerMethodField()
 
     class Meta:
         model = User
@@ -28,8 +27,6 @@ class UserSerializer(serializers.ModelSerializer):
     def get_username(self,obj):
         return f"{obj.FirstName} {obj.LastName}"
     
-    def get_FirstName(self,obj):
-        return f"Mr. {obj.FirstName}"
     
     def create(self, data):
         profileData = data.pop("profile")

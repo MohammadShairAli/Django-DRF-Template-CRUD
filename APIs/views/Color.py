@@ -5,9 +5,9 @@ from APIs.models import Colours
 from APIs.serializers import ColorSerializer
 import json
 
-@api_view(['GET','POST','PUT','DELETE'])
-def Color(request):
-    if request.method == "GET":
+# @api_view(['GET','POST','PUT','DELETE'])
+class Color(APIView):
+    def get(self,request):
         id = request.GET.get("id")
         if id :
             Data = Colours.objects.get(id=id)
@@ -17,14 +17,14 @@ def Color(request):
             serializer = ColorSerializer(Data,many=True)
         return Response(serializer.data)
     
-    elif request.method == "POST":
+    def post(self,request):
         serializer = ColorSerializer(data = request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors)
     
-    elif request.method == 'PUT':
+    def put(self,request):
         try:
             data = json.loads(request.body)
             print(data)
@@ -38,7 +38,7 @@ def Color(request):
             return Response(serializer.data)
         return Response(serializer.errors)
     
-    else:
+    def delete(self,request):
         try:
             data = request.GET
             id = data["id"]
